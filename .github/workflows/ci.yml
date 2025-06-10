@@ -1,5 +1,6 @@
 name: Spring Boot Maven CI with Wrapper
 
+
 on:
   push:
     branches: [ main ]
@@ -19,10 +20,15 @@ jobs:
         distribution: 'corretto'
 
     - name: Grant mvnw permission
-      run: chmod +x ./mvnw
+      run: |
+        echo "✅ Granting permission to mvnw"
+        chmod +x ./mvnw
 
     - name: Build with Maven Wrapper
-      run: ./mvnw clean package -DskipTests
+      run: |
+        echo "🏗️ Starting Maven build..."
+        ./mvnw clean package -DskipTests
+        echo "✅ Maven build finished"
 
     - name: Upload JAR as artifact
       uses: actions/upload-artifact@v4
@@ -30,13 +36,22 @@ jobs:
         name: springboot-jar
         path: target/*.jar
 
-    # Docker Build & Push
     - name: Build Docker Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/sample06:latest .
+      run: |
+        echo "🐳 Building Docker image..."
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/sample06:latest .
+        echo "✅ Docker image built"
 
     - name: Login to Docker Hub
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      run: |
+        echo "🔐 Logging in to Docker Hub..."
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+        echo "✅ Docker login successful"
 
     - name: Push Docker Image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/sample06:latest
+      run: |
+        echo "🚀 Pushing Docker image to Docker Hub..."
+        docker push ${{ secrets.DOCKER_USERNAME }}/sample06:latest
+        echo "✅ Docker image push complete"
+
 
