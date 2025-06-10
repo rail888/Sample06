@@ -1,4 +1,3 @@
-
 name: Spring Boot Maven CI with Wrapper
 
 on:
@@ -30,4 +29,14 @@ jobs:
       with:
         name: springboot-jar
         path: target/*.jar
+
+    # Docker Build & Push
+    - name: Build Docker Image
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/sample06:latest .
+
+    - name: Login to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Push Docker Image
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/sample06:latest
 
